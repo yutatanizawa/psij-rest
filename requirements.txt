@@ -1,0 +1,5 @@
+
+psij-python
+requests
+websocket
+
