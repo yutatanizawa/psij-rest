@@ -1,0 +1,13 @@
+LICENSE
+README.md
+setup.py
+src/psij-descriptors/rest_service_descriptor.py
+src/psij-rest/__init__.py
+src/psij-rest/version.py
+src/psij-rest/executors/__init__.py
+src/psij-rest/executors/rest_service.py
+src/psij_rest.egg-info/PKG-INFO
+src/psij_rest.egg-info/SOURCES.txt
+src/psij_rest.egg-info/dependency_links.txt
+src/psij_rest.egg-info/requires.txt
+src/psij_rest.egg-info/top_level.txt
