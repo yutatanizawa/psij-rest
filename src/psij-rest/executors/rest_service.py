@@ -2,7 +2,7 @@
 
 import json
 import requests
-import websocket
+import websockets
 import threading
 
 from urllib.parse import urlparse, urlunparse
@@ -93,7 +93,7 @@ class RestServiceJobExecutor(JobExecutor):
 
         assert ws_url.startswith('ws://')
 
-        ws = websocket.create_connection(ws_url + '/ws/' + self._cid)
+        ws = websockets.create_connection(ws_url + '/ws/' + self._cid)
         while True:
             msg = json.loads(ws.recv())
 
