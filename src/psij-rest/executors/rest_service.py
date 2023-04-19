@@ -2,7 +2,7 @@
 
 import json
 import requests
-import websockets
+import websocket
 import threading
 
 from urllib.parse import urlparse, urlunparse
@@ -74,7 +74,9 @@ class RestServiceJobExecutor(JobExecutor):
         self._lock = threading.Lock()
 
         # connect to service and register this client instance
-        self._cid = str(requests.get('%s/executor/%s' % (url, name)).json())
+        rep = requests.get('%s/executor/%s' % (url, name))
+        assert rep.ok
+        self._cid = str(rep.json())
 
         # create a daemong thread for websocket state notifications
         t = threading.Thread(target=self._state_listener)
@@ -93,7 +95,7 @@ class RestServiceJobExecutor(JobExecutor):
 
         assert ws_url.startswith('ws://')
 
-        ws = websockets.create_connection(ws_url + '/ws/' + self._cid)
+        ws = websocket.create_connection(ws_url + '/ws/' + self._cid)
         while True:
             msg = json.loads(ws.recv())
 
@@ -139,6 +141,7 @@ class RestServiceJobExecutor(JobExecutor):
         :return: The list of known job ids.
         """
         rep = requests.get('%s/%s/jobs' % (self.url, self._cid))
+        assert rep.ok
         return rep.json()
 
     def attach(self, job: Job, native_id: str) -> None:

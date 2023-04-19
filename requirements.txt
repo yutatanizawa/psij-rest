@@ -1,5 +1,8 @@
 
 psij-python
 requests
-websocket
+websockets
+websocket-client
+fastapi
+uvicorn
 
