@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open("src/psij-zmq/VERSION") as f:
+with open("src/psij-rest/VERSION") as f:
     VERSION = f.read().strip()
 
 if __name__ == '__main__':
