@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
 
-with open("src/psij-rest/version.py") as f:
-    exec(f.read())
-
+with open("src/psij-zmq/VERSION") as f:
+    VERSION = f.read().strip()
 
 if __name__ == '__main__':
     with open('requirements.txt') as f:
@@ -33,7 +32,7 @@ if __name__ == '__main__':
             '': ['README.md', 'LICENSE']
         },
 
-        scripts=[],
+        scripts=['bin/psij_rest_service.py'],
 
         entry_points={
         },

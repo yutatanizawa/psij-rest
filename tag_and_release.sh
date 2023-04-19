@@ -9,12 +9,12 @@ create_tag () {
         VERSION=$1
     fi
 
-    PSIJ_VERSION=$(PYTHONPATH=./src python3 -c "import psij; print(psij.__version__)" 2>/dev/null)
+    PSIJ_REST_VERSION=$(cat ./src/psij-rest/VERSION)
 
-    if [[ "$PSIJ_VERSION" == "$VERSION" ]]; then
+    if [[ "$PSIJ_REST_VERSION" == "$VERSION" ]]; then
         echo "Version requested matches package version: $VERSION"
     else
-        echo "[ERROR] Version mismatch. User request: '$VERSION' while package version is: '$PSIJ_VERSION'"
+        echo "[ERROR] Version mismatch. User request: '$VERSION' while package version is: '$PSIJ_REST_VERSION'"
         exit 1
     fi
 
@@ -27,7 +27,7 @@ create_tag () {
     fi
 
     echo "Creating tag"
-    git tag -a "$VERSION" -m "Psij $VERSION"
+    git tag -a "$VERSION" -m "PSIJ-REST $VERSION"
 
     echo "Pushing tag"
     git push origin --tags
