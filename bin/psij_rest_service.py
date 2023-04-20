@@ -299,5 +299,7 @@ if __name__ == '__main__':
         return service._request_list(cid)
 
     port = int(sys.argv[1])
-    print('url: http://localhost:%d/' % port)
+    sys.stdout.write('url: http://localhost:%d/\n' % port)
+    sys.stdout.flush()
     uvicorn.run(app, port=port, access_log=False)
+
