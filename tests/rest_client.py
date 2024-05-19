@@ -8,8 +8,10 @@ import requests
 import websocket
 import threading
 
+from psij.serialize import JSONSerializer
+
 url = sys.argv[1].rstrip('/')
-rep = requests.get('%s/executor/local' % url)
+rep = requests.get('%s/executor/slurm' % url)
 cid = str(rep.json())
 
 print('cid: %s' % rep.json())
@@ -30,14 +32,14 @@ t = threading.Thread(target=hello, args=[cid])
 t.daemon = True
 t.start()
 print('after ws')
-
-spec = psij.Export().to_dict(psij.JobSpec(executable='/bin/date'))
-rep = requests.put('%s/%s' % (url, cid), json=spec)
+s = JSONSerializer()
+spec = psij.JobSpec(executable='/bin/date')
+rep = requests.put('%s/%s' % (url, cid), json=s._from_spec(spec))
 jid = rep.json()
 print('=== submit: %s' % jid)
 
-spec = psij.Export().to_dict(psij.JobSpec(executable='/bin/sleep', arguments=['3']))
-rep = requests.put('%s/%s' % (url, cid), json=spec)
+spec = psij.JobSpec(executable='/bin/sleep', arguments=['10'])
+rep = requests.put('%s/%s' % (url, cid), json=s._from_spec(spec))
 jid = rep.json()
 print('=== submit: %s' % jid)
 

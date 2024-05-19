@@ -1,0 +1,64 @@
+diff --git a/bin/psij_rest_service.py b/bin/psij_rest_service.py
+index 2920472..6dda7e5 100755
+--- a/bin/psij_rest_service.py
++++ b/bin/psij_rest_service.py
+@@ -103,6 +103,7 @@ class _Client(object):
+         self._queue.put(msg)
+ 
+ 
++from psij.serialize import JSONSerializer
+ # ------------------------------------------------------------------------------
+ #
+ class Service(object):
+@@ -110,7 +111,7 @@ class Service(object):
+     def __init__(self, app: FastAPI) -> None:
+ 
+         self._clients: Dict[str, _Client] = dict()
+-        self._deserialize = psij.Import()
++        self._deserialize = JSONSerializer()
+         self._log = logging.getLogger('psij')
+         self._cnt: int = 0
+ 
+@@ -197,8 +198,7 @@ class Service(object):
+         client = self._clients.get(cid)
+         if not client:
+             raise ValueError('unknown client cid %s' % cid)
+-
+-        job = psij.Job(self._deserialize.from_dict(spec, 'JobSpec'))
++        job = psij.Job(self._deserialize._to_spec(spec))
+         client.add_job(job)
+         client.jex.submit(job)
+ 
+diff --git a/tests/rest_client.py b/tests/rest_client.py
+index fca277d..dcd40a2 100755
+--- a/tests/rest_client.py
++++ b/tests/rest_client.py
+@@ -8,6 +8,8 @@ import requests
+ import websocket
+ import threading
+ 
++from psij.serialize import JSONSerializer
++
+ url = sys.argv[1].rstrip('/')
+ rep = requests.get('%s/executor/local' % url)
+ cid = str(rep.json())
+@@ -30,14 +32,14 @@ t = threading.Thread(target=hello, args=[cid])
+ t.daemon = True
+ t.start()
+ print('after ws')
+-
+-spec = psij.Export().to_dict(psij.JobSpec(executable='/bin/date'))
+-rep = requests.put('%s/%s' % (url, cid), json=spec)
++s = JSONSerializer()
++spec = psij.JobSpec(executable='/bin/date')
++rep = requests.put('%s/%s' % (url, cid), json=s._from_spec(spec))
+ jid = rep.json()
+ print('=== submit: %s' % jid)
+ 
+-spec = psij.Export().to_dict(psij.JobSpec(executable='/bin/sleep', arguments=['3']))
+-rep = requests.put('%s/%s' % (url, cid), json=spec)
++spec = psij.JobSpec(executable='/bin/sleep', arguments=['3'])
++rep = requests.put('%s/%s' % (url, cid), json=s._from_spec(spec))
+ jid = rep.json()
+ print('=== submit: %s' % jid)
+ 

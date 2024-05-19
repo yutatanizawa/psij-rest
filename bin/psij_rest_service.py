@@ -103,6 +103,7 @@ class _Client(object):
         self._queue.put(msg)
 
 
+from psij.serialize import JSONSerializer
 # ------------------------------------------------------------------------------
 #
 class Service(object):
@@ -110,7 +111,7 @@ class Service(object):
     def __init__(self, app: FastAPI) -> None:
 
         self._clients: Dict[str, _Client] = dict()
-        self._deserialize = psij.Import()
+        self._deserialize = JSONSerializer()
         self._log = logging.getLogger('psij')
         self._cnt: int = 0
 
@@ -197,8 +198,7 @@ class Service(object):
         client = self._clients.get(cid)
         if not client:
             raise ValueError('unknown client cid %s' % cid)
-
-        job = psij.Job(self._deserialize.from_dict(spec, 'JobSpec'))
+        job = psij.Job(self._deserialize._to_spec(spec))
         client.add_job(job)
         client.jex.submit(job)
 
